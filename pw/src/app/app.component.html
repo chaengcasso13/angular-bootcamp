@@ -1,32 +1,114 @@
-<h1>Password Generator</h1>
+<div class="container" #content>
+  <div class="columns is-centered">
+    <div class="box column is-one-third">
+      <h1 class="title has-text-centered">Password Generator</h1>
 
-<div>
-  <label>Enter length</label>
-  <input (input)="onChangeLength($event)"/>
+      <div class="field">
+        <label>Length</label>
+        <input class="input" (input)="onChangeLength($event)" />
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <input (change)="onChangeUseLetters()" type="checkbox" />
+            Use Letters
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <input (change)="onChangeUseNumbers()" type="checkbox" />
+            Use Numbers
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <input (change)="onChangeUseSymbols()" type="checkbox" />
+            Use Symbols
+          </label>
+        </div>
+      </div>
+
+      <button [disabled]="
+          !(length && (includeLetters || includeSymbols || includeNumbers))
+        " (click)="onButtonClick()" class="button is-link is-fullwidth">
+        Generate!
+      </button>
+      <!-- <button [disabled]="
+          (length && (includeLetters || includeSymbols || includeNumbers))
+        " (click)="generatePDF()" class="button is-link is-fullwidth">
+        Generate PDF!
+      </button> -->
+
+      <div class="box" *ngIf="password">
+        <label>Your Password</label>
+        <input class="input" [value]="password" />
+      </div>
+    </div>
+  </div>
 </div>
 
-<div>
-  <label>User Letters</label>
-  <input (change)="onChangeUseLetters()" type="checkbox" name="" id="">
+<ng-template #letterheadTemplate>
+  <app-letterhead></app-letterhead>
+</ng-template>
+<div id="contentToConvert" style="position: absolute; left: -9999px;">
+  <div #letterheadContent>
+    <ng-container *ngTemplateOutlet="letterheadTemplate"></ng-container>
+  </div>
 </div>
+<!-- <app-letterhead #letterheadx></app-letterhead> -->
 
-<div>
-  <label>User Numbers</label>
-  <input (change)="onChangeUseNumbers()" type="checkbox" name="" id="">
+<div *ngIf="pdfSrc">
+  <!-- <ngx-extended-pdf-viewer [src]="pdfSrc" [useBrowserLocale]="true" style="display: block; height: 80vh;"></ngx-extended-pdf-viewer> -->
+
+  <!-- <ngx-extended-pdf-viewer 
+  #pdfViewer
+  [src]="pdfSrc" 
+  [customToolbar]="toolbar"
+  [height]="'80vh'"
+  [useBrowserLocale]="true" 
+  style="display: block; height: 80vh;">
+  </ngx-extended-pdf-viewer> -->
+
+  <ngx-extended-pdf-viewer
+  #pdfViewer
+  [customFreeFloatingBar]="floatingZoombar"
+  [src]="pdfSrc"
+  [textLayer]="true"
+  [zoom]="zoom"
+  [showZoomButtons]="false"
+  [showFreeFloatingBar]="showFreeFloatingBar">
+</ngx-extended-pdf-viewer>
+
+  <!-- <ng-template #toolbar>
+    <button (click)="onPrint()">Print</button>
+    <button (click)="onZoomIn()">Zoom In</button>
+    <button (click)="onZoomOut()">Zoom Out</button>
+  </ng-template> -->
+
+  <ng-template #floatingZoombar>
+    <div style="position: absolute;bottom:20px;left:41%;z-index:1;background-color:#dbe5e9;padding:4px;padding-bottom: 8px;border:1px solid darkgray">
+      <div>
+        <pdf-zoom-dropdown class="invisible"></pdf-zoom-dropdown>
+  
+        <input type="radio" id="zoom50" class="toolbarField radio" tabindex="94" (click)="zoom = '50%'" name="zoom" [checked]="zoom==='50%'" />
+        <label for="zoom50" class="toolbarLabel">50%</label>
+  
+        <input type="radio" id="zoom100" class="toolbarField radio" tabindex="95" (click)="zoom = '100%'" name="zoom" [checked]="zoom==='100%'"/>
+        <label for="zoom100" class="toolbarLabel">100%</label>
+  
+        <input type="radio" id="zoom200" class="toolbarField radio" tabindex="96" (click)="zoom = '200%'" name="zoom" [checked]="zoom==='200%'"/>
+        <label for="zoom200" class="toolbarLabel">200%</label>
+  
+        <input type="radio" id="zoom-auto" class="toolbarField radio" tabindex="97" (click)="zoom = 'auto'" name="zoom" [checked]="zoom==='auto'"/>
+        <label for="zoom-auto" class="toolbarLabel">auto</label>
+      </div>
+    </div>
+  </ng-template>
 </div>
-
-<div>
-  <label>User Symbols</label>
-  <input (change)="onChangeUseSymbols()" type="checkbox" name="" id="">
-</div>
-
-<div>
-  <button [disabled]="(!length)" (click)="onButtonClick()">Generate!</button>
-</div>
-
-<div>
-  <label>Your Password</label>
-  <input type="text" [value]="password">
-</div>
-
-{{ password }}
